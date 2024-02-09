@@ -1,0 +1,30 @@
+[
+    {
+      "Faculty": "Professor Timmons",
+      "Semester": "Spring",
+      "Year": 2024,
+      "Course Prefix": "CPT",
+      "Course Number": 264,
+      "Section": "H01",
+      "Class Description": "This course covers the techniques of system analysis, design, development, and implementation."
+    },
+    {
+      "Faculty": "Professor Carmon",
+      "Semester": "Fall",
+      "Year": 2023,
+      "Course Prefix": "CPT",
+      "Course Number": 242,
+      "Section": "H01",
+      "Class Description": "This course introduces database models and the fundamentals of database design. Topics include database structure, database processing, and application programs which access a database."
+    },
+    {
+      "Faculty": "Professor Fulp",
+      "Semester": "Fall",
+      "Year": 2023,
+      "Course Prefix": "CPT",
+      "Course Number": 240,
+      "Section": "H01",
+      "Class Description": "This course is a study of the implementation of dynamic web pages focusing on the development of websites that interact with databases utilizing current server-side technologies along with the databases to deliver dynamic content to the client browser."
+    }
+  ]
+  

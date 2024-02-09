@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1706717964653,
+        "faculty": "carmon",
+        "semester": "summer",
+        "year": "2024",
+        "coursePrefix": "CPT",
+        "courseNumber": "262",
+        "section": "I01"
+    },
+    {
+        "id": 1707335956281,
+        "faculty": "timmons",
+        "semester": "summer",
+        "year": "2024",
+        "coursePrefix": "CPT",
+        "courseNumber": "120",
+        "section": "H01"
+    }
+]
