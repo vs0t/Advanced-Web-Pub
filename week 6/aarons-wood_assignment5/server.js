@@ -153,7 +153,7 @@ app.get('/api/courseinfo', (req, res) => {
   });
 });
 
-app.post('/faculty', function (req, res) {
+app.post('/course', function (req, res) {
   var faculty = req.body.faculty;
   var semester = req.body.semester;
   var year = req.body.year;
@@ -182,7 +182,7 @@ app.post('/faculty', function (req, res) {
   });
 });
 
-app.post('/course', function (req, res) {
+app.post('/faculty', function (req, res) {
   // var fid = req.body.facultyid;
   var fname = req.body.facultyname;
   var femail = req.body.facultyemail;

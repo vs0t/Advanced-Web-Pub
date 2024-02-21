@@ -79,7 +79,7 @@ var InsertCourse = React.createClass({
     
     // AJAX call to server to submit course data
     $.ajax({
-        url: '/faculty',  
+        url: '/course',  
         type: 'POST',
         contentType: 'application/json',
         data: courseData,
@@ -89,7 +89,7 @@ var InsertCourse = React.createClass({
             this.setState(this.getInitialState()); 
         }.bind(this),
         error: function(xhr, status, err) {
-            console.error('/faculty', status, err.toString()); 
+            console.error('/course', status, err.toString()); 
         }.bind(this)
     });
 },
