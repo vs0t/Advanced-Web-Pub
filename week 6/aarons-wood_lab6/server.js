@@ -105,7 +105,7 @@ app.post('/updatesingleemp', function (req, res, ) {
     var sqlins = "UPDATE employeetable SET dbemployeeid = ?, dbemployeename = ?, dbemployeeemail = ?, " +
         " dbemployeephone = ?, dbemployeesalary = ?, dbemployeemailer = ?, dbemployeetype = ? " +
         " WHERE dbemployeekey = ?";
-    var inserts = [eid, ename, ephone, eemail, esalary, emailer, etype, ekey];
+    var inserts = [eid, ename, eemail, ephone, esalary, emailer, etype, ekey];
     var sql = mysql.format(sqlins, inserts);
     console.log(sql)
     con.execute(sql, function (err, result) {
