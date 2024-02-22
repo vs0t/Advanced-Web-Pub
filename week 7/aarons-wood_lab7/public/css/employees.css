@@ -1,0 +1,24 @@
+table, th, td {
+    border: 1px solid black;
+}
+
+div {
+    text-align: center;
+}
+
+#theform {
+    display: inline-block;
+}
+
+#theresults {
+    display: inline-block;
+}
+
+#theleft {
+    float: left;
+    padding-right: 20px;
+}
+
+#theright {
+    float: right;
+}
