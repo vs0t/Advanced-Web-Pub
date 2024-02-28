@@ -238,6 +238,28 @@ app.get('/searchfac/', function(req, res) {
   var femail = req.query.facultyemail;
   console.log(fname, femail);
 
+  var sqlsel = "SELECT username, useremail FROM epicusers WHERE username LIKE ? AND useremail LIKE ?";
+  var inserts = ['%' + fname + '%', '%' + femail + '%'];
+  var sql = mysql.format(sqlsel, inserts);
+  console.log(sql);
+
+  con.execute(sql, function (err, data) {
+    if (err) throw err;
+    console.log("1 set recorded");
+    console.log(data)
+    // res.redirect("/user/insertfaculty.html");
+    // res.end();
+    res.send(JSON.stringify(data));
+    
+
+});
+});
+
+app.get('/searchFaculty/', function(req, res) {
+  var fname = req.query.facultyname;
+  var femail = req.query.facultyemail;
+  console.log(fname, femail);
+
   var sqlsel = "SELECT * FROM epicusers";
   // var inserts = ['%' + fname + '%', '%' + femail + '%'];
   var sql = mysql.format(sqlsel);

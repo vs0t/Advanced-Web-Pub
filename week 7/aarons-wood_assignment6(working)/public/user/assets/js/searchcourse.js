@@ -26,14 +26,14 @@ var CourseBox = React.createClass({
     },
     loadFacultiesFromServer: function() {
         $.ajax({
-            url: '/searchfac',
+            url: '/searchFaculty',
             dataType: 'json',
             cache: false,
             success: function(data) {
                 this.setState({ faculties: data });
             }.bind(this),
             error: function(xhr, status, err) {
-                console.error('/searchfac', status, err.toString());
+                console.error('/searchFaculty', status, err.toString());
             }.bind(this)
         });
     },
