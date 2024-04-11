@@ -11,9 +11,9 @@ const mysql = require("mysql2");
 
 const con = mysql.createConnection({
   host: "istwebclass.org",
-  user: "eaaronsw_CapstoneAdmin",
-  password: "P@s$w0rd0312",
-  database: "eaaronsw_Capstone",
+  user: "",
+  password: "",
+  database: "",
 });
 
 con.connect(function (err) {
