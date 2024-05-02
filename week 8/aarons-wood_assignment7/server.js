@@ -12,9 +12,9 @@ const mysql = require("mysql2");
 
 const con = mysql.createConnection({
   host: "istwebclass.org",
-  user: "eaaronsw_epicDBAdmin",
-  password: "P@s$w0rd0312",
-  database: "eaaronsw_epicDB2",
+  user: "",
+  password: "",
+  database: "",
 });
 
 con.connect(function (err) {
