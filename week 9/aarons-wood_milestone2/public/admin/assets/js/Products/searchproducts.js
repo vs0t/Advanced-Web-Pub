@@ -24,10 +24,10 @@ var ProductSearchBox = React.createClass({
                 <table>
                     <thead>
                         <tr>
-                            <th>| Product Name |</th>
-                            <th>| Description |</th>
-                            <th>| Price |</th>
-                            <th>| Size |</th>
+                            <th>Product Name</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Size</th>
                         </tr>
                     </thead>
                     <ProductList data={this.state.data} />
@@ -64,7 +64,7 @@ var ProductSearchForm = React.createClass({
     render: function () {
         return (
             <form onSubmit={this.handleSubmit}>
-                <h2>Product Search</h2>
+                <h3>Use the Form below to search our product list.</h3>
                 <input type="text" name="productName" value={this.state.productName} onChange={this.handleChange} placeholder="Product Name" />
                 <input type="text" name="productDesc" value={this.state.productDesc} onChange={this.handleChange} placeholder="Product Description" />
                 <input type="text" name="productPrice" value={this.state.productPrice} onChange={this.handleChange} placeholder="Product Price" />
@@ -100,10 +100,10 @@ var Product = React.createClass({
     render: function () {
         return (
             <tr>
-                <td>| {this.props.productName} |</td>
-                <td>| {this.props.productDesc} |</td>
-                <td>| {this.props.productPrice} |</td>
-                <td>| {this.props.productSize} |</td>
+                <td>{this.props.productName}</td>
+                <td>{this.props.productDesc}</td>
+                <td>{this.props.productPrice}</td>
+                <td>{this.props.productSize}</td>
             </tr>
         );
     }

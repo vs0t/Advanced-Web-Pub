@@ -25,7 +25,7 @@ app.set("port", process.env.PORT || 3000);
 
 app.use("/", express.static(path.join(__dirname, "public")));
 app.get("/", function (req, res) {
-  res.redirect("/admin/insertuser.html");
+  res.redirect("landing.html");
 });
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -71,44 +71,41 @@ app.get("/getuserrole/", function (req, res) {
 });
 
 app.post("/insertuser", function (req, res) {
-  var cname = req.body.customername;
-  var clastname = req.body.userlastname; // Added based on the form
-  var caddress = req.body.customeraddress;
-  var ccity = req.body.usercity; // Added based on the form
-  var cstate = req.body.userstate; // Added based on the form
-  var czip = req.body.customerzip;
-  var cemail = req.body.customeremail;
-  var cpw = req.body.customerpw;
-  var userCat = req.body.userCat;
-  var userRole = req.body.userRole;
+  var employeenameEA = req.body.employeename;
+  var employeelastnameEA = req.body.employeelastname;
+  var employeeaddressEA = req.body.employeeaddress;
+  var employeecityEA = req.body.employeecity;
+  var employeestateEA = req.body.employeestate;
+  var employeezipEA = req.body.employeezip;
+  var employeeemailEA = req.body.employeeemail;
+  var employeepwEA = req.body.employeepw;
+  var userCatEA = req.body.userCat;
+  var userRoleEA = req.body.userRole;
 
   var saltRounds = 10;
-  var theHashedPW = "";
-  bcrypt.hash(cpw, saltRounds, function (err, hashedPassword) {
+  var theHashedPWEA = "";
+
+  bcrypt.hash(employeepwEA, saltRounds, function (err, hashedPassword) {
     if (err) {
       console.log("Error hashing password: ", err);
       return res.status(500).send("Error processing the request.");
     } else {
-      theHashedPW = hashedPassword;
-      var sqlins =
-        "INSERT INTO User (UserFirstName, UserLastName, UserAddress, UserCity, UserState, UserZip, UserEmail, UserPassword, CatagoryID, RoleID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-      var inserts = [
-        cname,
-        clastname,
-        caddress,
-        ccity,
-        cstate,
-        czip,
-        cemail,
-        theHashedPW,
-        userCat,
-        userRole,
+      theHashedPWEA = hashedPassword;
+      var sqlinsEA = "INSERT INTO User (UserFirstName, UserLastName, UserAddress, UserCity, UserState, UserZip, UserEmail, UserPassword, CatagoryID, RoleID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      var insertsEA = [
+        employeenameEA,
+        employeelastnameEA,
+        employeeaddressEA,
+        employeecityEA,
+        employeestateEA,
+        employeezipEA,
+        employeeemailEA,
+        theHashedPWEA,
+        userCatEA,
+        userRoleEA,
       ];
-
-      var sql = mysql.format(sqlins, inserts);
-
-      con.execute(sql, function (err, result) {
+      var sqlEA = mysql.format(sqlinsEA, insertsEA);
+      con.execute(sqlEA, function (err, result) {
         if (err) {
           console.error("Error executing query: ", err);
           return res.status(500).send("Error processing the request.");
@@ -213,23 +210,22 @@ app.post("/updateuser", function (req, res) {
 });
 
 app.post("/insertproduct", function (req, res) {
-  var pName = req.body.productName;
-  var pDesc = req.body.productDesc;
-  var pPrice = req.body.productPrice;
-  var pSize = req.body.productSize;
+  var pNameEA = req.body.productName;
+  var pDescEA = req.body.productDesc;
+  var pPriceEA = req.body.productPrice;
+  var pSizeEA = req.body.productSize;
 
-  var sqlins =
-    "INSERT INTO Product (ProductName, ProductDesc, ProductPrice, ProductSize) VALUES (?, ?, ?, ?)";
-  var inserts = [pName, pDesc, pPrice, pSize];
-  var sql = mysql.format(sqlins, inserts);
+  var sqlinsEA = "INSERT INTO Product (ProductName, ProductDesc, ProductPrice, ProductSize) VALUES (?, ?, ?, ?)";
+  var insertsEA = [pNameEA, pDescEA, pPriceEA, pSizeEA];
+  var sqlEA = mysql.format(sqlinsEA, insertsEA);
 
-  con.query(sql, function (err, result) {
+  con.query(sqlEA, function (err, result) {
     if (err) {
       console.error("Error executing query: ", err);
       return res.status(500).send("Error processing the request.");
     }
     console.log("1 product inserted");
-    res.send({ success: true, productId: result.insertId}); // Respond with success and the ID of the inserted product
+    res.send({ success: true, productId: result.insertId }); // Respond with success and the ID of the inserted product
   });
 });
 
@@ -255,13 +251,18 @@ app.post("/updateproduct", function (req, res) {
   con.query(sql, function (err, result) {
     if (err) {
       console.error("Error executing query: ", err);
-      return res.status(500).send({ success: false, message: "Error processing the request." });
+      return res
+        .status(500)
+        .send({ success: false, message: "Error processing the request." });
     }
     console.log("Product updated successfully");
-    res.send({ success: true, message: "Product updated successfully", productId: pId });
+    res.send({
+      success: true,
+      message: "Product updated successfully",
+      productId: pId,
+    });
   });
 });
-
 
 app.get("/searchproducts", function (req, res) {
   // Assume that the query parameters could be used for searching/filtering
@@ -271,7 +272,8 @@ app.get("/searchproducts", function (req, res) {
   const size = req.query.size;
 
   // Construct the SQL query
-  let sql = "SELECT ProductID, ProductName, ProductDesc, ProductPrice, ProductSize FROM Product";
+  let sql =
+    "SELECT ProductID, ProductName, ProductDesc, ProductPrice, ProductSize FROM Product";
   let conditions = [];
   let params = [];
 
@@ -312,16 +314,16 @@ app.get("/searchproducts", function (req, res) {
 });
 
 app.post("/insertinventory", function (req, res) {
-  var invProductId = req.body.productID;
-  var invQuantity = req.body.inventoryQuantity;
+  var invProductIdEA = req.body.productID;
+  var invQuantityEA = req.body.inventoryQuantity;
 
   // SQL Query to insert inventory data
-  var sqlins = "INSERT INTO Inventory (ProductID, InventoryQuantity) VALUES (?, ?)";
-  var inserts = [invProductId, invQuantity];
-  var sql = mysql.format(sqlins, inserts);
+  var sqlinsEA = "INSERT INTO Inventory (ProductID, InventoryQuantity) VALUES (?, ?)";
+  var insertsEA = [invProductIdEA, invQuantityEA];
+  var sqlEA = mysql.format(sqlinsEA, insertsEA);
 
   // Execute SQL query
-  con.query(sql, function (err, result) {
+  con.query(sqlEA, function (err, result) {
     if (err) {
       console.error("Error executing query: ", err);
       return res.status(500).send("Error processing the request.");
@@ -336,10 +338,13 @@ app.post("/updateinventory", function (req, res) {
   var quantity = req.body.quantity;
 
   if (!inventoryId || quantity === undefined) {
-    return res.status(400).send({ message: "Inventory ID and Quantity are required." });
+    return res
+      .status(400)
+      .send({ message: "Inventory ID and Quantity are required." });
   }
 
-  var sqlUpdate = "UPDATE Inventory SET InventoryQuantity = ? WHERE InventoryID = ?";
+  var sqlUpdate =
+    "UPDATE Inventory SET InventoryQuantity = ? WHERE InventoryID = ?";
   var updates = [quantity, inventoryId];
 
   con.execute(sqlUpdate, updates, function (err, result) {
@@ -348,10 +353,12 @@ app.post("/updateinventory", function (req, res) {
       return res.status(500).send({ message: "Error updating inventory." });
     }
     console.log("Inventory updated successfully");
-    res.json({ message: "Inventory updated successfully", inventoryId: inventoryId });
+    res.json({
+      message: "Inventory updated successfully",
+      inventoryId: inventoryId,
+    });
   });
 });
-
 
 app.get("/searchinventory", function (req, res) {
   // Assume that the query parameters could be used for searching/filtering
@@ -395,9 +402,61 @@ app.get("/searchinventory", function (req, res) {
   });
 });
 
+app.post("/insertplayer", function (req, res) {
+  var playerFirstNameEA = req.body.playerFirstName;
+  var playerLastNameEA = req.body.playerLastName;
+  var playerEmailEA = req.body.playerEmail;
+  var playerPasswordEA = req.body.playerPassword;
+  var playerAddressEA = req.body.playerAddress;
+  var playerCityEA = req.body.playerCity;
+  var playerStateEA = req.body.playerState;
+  var playerZipEA = req.body.playerZip;
+  var rewardsIdEA = req.body.rewardsId;
+
+  var saltRounds = 10;
+
+  // Hash the player's password
+  bcrypt.hash(playerPasswordEA, saltRounds, function (err, hashedPassword) {
+    if (err) {
+      console.log("Error hashing password: ", err);
+      return res.status(500).send("Error processing the request.");
+    } else {
+      var theHashedPWEA = hashedPassword;
+      var sqlins =
+        "INSERT INTO Player (PlayerFirstName, PlayerLastName, PlayerEmail, PlayerPassword, PlayerAddress, PlayerCity, PlayerState, PlayerZip, RewardsID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      var inserts = [
+        playerFirstNameEA,
+        playerLastNameEA,
+        playerEmailEA,
+        theHashedPWEA,
+        playerAddressEA,
+        playerCityEA,
+        playerStateEA,
+        playerZipEA,
+        rewardsIdEA,
+      ];
+      var sql = mysql.format(sqlins, inserts);
+
+      // Execute the SQL query
+      con.execute(sql, function (err, result) {
+        if (err) {
+          console.error("Error executing query: ", err);
+          return res.status(500).send("Error processing the request.");
+        }
+        console.log("1 record inserted");
+        // Redirect or send a response here
+        res.send({
+          success: true,
+          message: "Player inserted successfully.",
+        });
+      });
+    }
+  });
+});
+
 app.get("/getplayers", function (req, res) {
   // Construct the SQL query to select all players
-  let sql = "SELECT PlayerID, PlayerFirstName FROM Player";
+  let sql = "SELECT PlayerID, PlayerFirstName, PlayerLastName FROM Player";
 
   // Execute the SQL query
   con.query(sql, function (err, results) {
@@ -412,7 +471,124 @@ app.get("/getplayers", function (req, res) {
   });
 });
 
+app.post("/insertorder", function (req, res) {
+  // Extract order details from the request body
+  var userIdEA = req.body.userId;
+  var productIdEA = req.body.productId;
+  var quantityEA = req.body.quantity;
+  var priceEA = req.body.price;
+  var dateEA = req.body.date;
+  var timeEA = req.body.time;
+  var orderStatusEA = req.body.orderStatus;
 
+  // Create SQL to insert the order
+  var sqlinsEA = `INSERT INTO Orders (UserID, ProductID, OrderQuantity, OrderTotalPrice, OrdersDate, OrdersTime, OrderStatus) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+  var valuesEA = [
+    userIdEA,
+    productIdEA,
+    quantityEA,
+    priceEA * quantityEA,
+    dateEA,
+    timeEA,
+    orderStatusEA,
+  ];
+  var sqlEA = mysql.format(sqlinsEA, valuesEA);
+
+  // Execute the SQL query
+  con.execute(sqlEA, function (err, result) {
+    if (err) {
+      console.error("Error executing query: ", err);
+      return res.status(500).send("Error processing the request.");
+    }
+    console.log("1 record inserted");
+    // Redirect or send a response here
+    res.send({ success: true, message: "Order inserted successfully." });
+  });
+});
+
+app.post("/insertreservation", function (req, res) {
+  // Extract reservation details from the request body
+  var playerIdEA = req.body.playerId;
+  var reservationsDateEA = req.body.reservationsDate;
+  var reservationsTimeEA = req.body.reservationsTime;
+  var reservationsCountEA = req.body.reservationsCount;
+  var reservationsStatusEA = '0'; // Default status is '0'
+
+  // SQL query to insert the reservation data
+  var sqlinsEA = "INSERT INTO Reservations (PlayerID, ReservationsDate, ReservationsTime, ReservationsCount, ReservationsStatus) VALUES (?, ?, ?, ?, ?)";
+  var insertsEA = [
+    playerIdEA,
+    reservationsDateEA,
+    reservationsTimeEA,
+    reservationsCountEA,
+    reservationsStatusEA
+  ];
+  var sqlEA = mysql.format(sqlinsEA, insertsEA);
+
+  // Execute the SQL query
+  con.execute(sqlEA, function (err, result) {
+    if (err) {
+      console.error("Error executing query: ", err);
+      return res.status(500).send("Error processing the reservation request.");
+    }
+    console.log("1 reservation inserted");
+    console.log(sqlEA);
+    res.send({
+      success: true,
+      message: "Reservation inserted successfully.",
+      reservationId: result.insertId
+    });
+  });
+});
+
+
+app.get("/getrewards", function (req, res) {
+  // Construct the SQL query to select all players
+  let sql = "SELECT * FROM Rewards";
+
+  // Execute the SQL query
+  con.query(sql, function (err, results) {
+    if (err) {
+      console.error("Error executing the query", err);
+      return res.status(500).send("Error executing the query");
+    }
+
+    // Send the results back to the client
+    res.json(results);
+    console.log(results);
+  });
+});
+
+app.post("/loginemp/", function (req, res) {
+  var eemail = req.body.employeeemail;
+  var epw = req.body.employeepw;
+  var sqlsel = "select * from User where UserEmail = ?";
+  var inserts = [eemail];
+  var sql = mysql.format(sqlsel, inserts);
+  console.log("sql: " + sql);
+  con.query(sql, function (err, data) {
+    if (data.length > 0) {
+      console.log("user name correct:");
+      console.log(data[0].UserPassword);
+      bcrypt.compare(
+        epw,
+        data[0].UserPassword,
+        function (err, passwordCorrect) {
+          if (err) {
+            throw err;
+          } else if (!passwordCorrect) {
+            console.log("Password incorrect");
+          } else {
+            console.log("password correct");
+            res.send({ redirect: "insertuser.html" });
+          }
+        }
+      );
+    } else {
+      console.log("incorrect username or password...");
+    }
+  });
+});
 
 app.listen(app.get("port"), function () {
   console.log("Server started: http://localhost:" + app.get("port") + "/");

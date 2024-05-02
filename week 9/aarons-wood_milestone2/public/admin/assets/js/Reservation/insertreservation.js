@@ -1,253 +1,202 @@
 var ReservationBox = React.createClass({
-    handleReservationSubmit: function (reservation) {
-      $.ajax({
-        url: "/insertreservation",
-        dataType: "json",
-        type: "POST",
-        data: reservation,
-        success: function (data) {
-          this.setState({ data: data });
-        }.bind(this),
-        error: function (xhr, status, err) {
-          console.error(this.props.url, status, err.toString());
-        }.bind(this),
-      });
-    },
-  
-    render: function () {
-      return (
-        <div className="ReservationBox">
-          <ReservationForm onReservationSubmit={this.handleReservationSubmit} />
-        </div>
-      );
-    },
-  });
-  
-  var ReservationForm = React.createClass({
-    getInitialState: function () {
-      return {
-        playerID: "",
-        reservationsTime: "",
-        playersData: []
-      };
-    },
-  
-    loadPlayersData: function () {
-      $.ajax({
-        url: "/getplayers",
-        dataType: "json",
-        cache: false,
-        success: function (data) {
-          this.setState({ playersData: data });
-        }.bind(this),
-      });
-    },
-  
-    handlePlayerChange: function (event) {
-      this.setState({ playerID: event.target.value });
-    },
-  
-    componentDidMount: function () {
-      this.loadPlayersData();
-    },
-  
-    handleSubmit: function (e) {
-      e.preventDefault();
-  
-      var playerID = this.state.playerID;
-      var reservationsTime = this.state.reservationsTime;
-  
-      if (!playerID || !reservationsTime) {
-        console.log("Required fields are missing");
-        return;
-      }
-  
-      this.props.onReservationSubmit({
-        playerID: playerID,
-        reservationsTime: reservationsTime,
-        reservationsStatus: "0",
-      });
-    },
-  
-    setValue: function (field, event) {
-      var object = {};
-      object[field] = event.target.value;
-      this.setState(object);
-    },
-  
-    render: function () {
-      return (
-        <form className="reservationForm" onSubmit={this.handleSubmit}>
-          <h2>Reservation Information Area</h2>
-          <table>
-            <tbody>
-              <tr>
-                <th>Player Name</th>
-                <td>
-                  <SelectList
-                    data={this.state.playersData}
-                    onChange={this.handlePlayerChange}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>Reservation Time</th>
-                <td>
-                  <TextInput
-                    inputType="datetime-local"
-                    value={this.state.reservationsTime}
-                    uniqueName="reservationsTime"
-                    textArea={false}
-                    required={true}
-                    validate={this.commonValidate}
-                    onChange={this.setValue.bind(this, "reservationsTime")}
-                    errorMessage="Invalid Reservation Time"
-                    emptyMessage="Reservation Time is Required"
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <input type="submit" value="Insert Reservation" />
-        </form>
-      );
-    },
-  });
-  
-  var SelectList = React.createClass({
-    handleChange: function (event) {
-      if (this.props.onChange) {
-        this.props.onChange(event);
-      }
-    },
-    render: function () {
-      return (
-        <select name="playerID" id="playerID" onChange={this.handleChange}>
-          <option value="">Select Player</option>
-          {this.props.data.map(function (player) {
-            return (
-              <option key={player.PlayerID} value={player.PlayerID}>
-                {player.PlayerFirstName}
-              </option>
-            );
-          })}
-        </select>
-      );
-    },
-  });
+  getInitialState: function () {
+    return {
+      userDataEA: [],
+    };
+  },
+  loadUserOptions: function () {
+    // Fetch the user options
+    $.ajax({
+      url: "/getplayers", // Endpoint to fetch users
+      dataType: "json",
+      cache: false,
+      success: function (dataEA) {
+        this.setState({ userDataEA: dataEA });
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error("/getplayers", status, err.toString());
+      }.bind(this),
+    });
+  },
+  componentDidMount: function () {
+    this.loadUserOptions();
+  },
+  handleReservationSubmit: function (reservationEA) {
+    $.ajax({
+      url: "/insertreservation",
+      dataType: "json",
+      type: "POST",
+      data: reservationEA,
+      success: function (dataEA) {
+        console.log("Reservation inserted successfully");
+        alert(dataEA.message);
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error("/insertreservation", status, err.toString());
+      }.bind(this),
+    });
+  },
+  render: function () {
+    return (
+      <div className="reservationBox">
+        <h2>Schedule a Reservation</h2>
+        <ReservationForm
+          onReservationSubmit={this.handleReservationSubmit}
+          userData={this.state.userDataEA}
+        />
+      </div>
+    );
+  },
+});
 
-  var InputError = React.createClass({
-    getInitialState: function () {
-      return {
-        message: "Input is invalid",
-      };
-    },
-    render: function () {
-      var errorClass = classNames(this.props.className, {
-        error_container: true,
-        visible: this.props.visible,
-        invisible: !this.props.visible,
+var ReservationForm = React.createClass({
+  getInitialState: function () {
+    return {
+      selectedUserIdEA: "",
+      selectedDateEA: "",
+      selectedTimeEA: "",
+      numberOfGuestsEA: "",
+    };
+  },
+  handleUserChange: function (e) {
+    this.setState({ selectedUserIdEA: e.target.value });
+  },
+  handleDateChange: function (e) {
+    this.setState({ selectedDateEA: e.target.value });
+  },
+  handleTimeChange: function (e) {
+    this.setState({ selectedTimeEA: e.target.value });
+  },
+  handleGuestsChange: function (e) {
+    this.setState({ numberOfGuestsEA: e.target.value });
+  },
+  handleSubmit: function (e) {
+    e.preventDefault();
+    var reservationEA = {
+      playerId: this.state.selectedUserIdEA,
+      reservationsDate: this.state.selectedDateEA,
+      reservationsTime: this.state.selectedTimeEA,
+      reservationsCount: this.state.numberOfGuestsEA,
+    };
+    this.props.onReservationSubmit(reservationEA);
+  },
+
+  render: function () {
+    return (
+      <form className="reservationForm" onSubmit={this.handleSubmit}>
+        <table>
+          <tbody>
+            <tr>
+              <th>Select Player</th>
+              <td>
+                <SelectList
+                  data={this.props.userData}
+                  onChange={this.handleUserChange}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>Select Date</th>
+              <td>
+                <input type="date" onChange={this.handleDateChange} />
+              </td>
+            </tr>
+            <tr>
+              <th>Select Time</th>
+              <td>
+                <TimeSelectList onChange={this.handleTimeChange} />
+              </td>
+            </tr>
+            <tr>
+              <th>Number of Guests</th>
+              <td>
+                <input
+                  type="number"
+                  onChange={this.handleGuestsChange}
+                  min="1"
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <input type="submit" value="Make Reservation" />
+      </form>
+    );
+  },
+});
+
+var SelectList = React.createClass({
+  handleChange: function (event) {
+    if (this.props.onChange) {
+      this.props.onChange(event);
+    }
+  },
+  render: function () {
+    var options = this.props.data.map(function (itemEA) {
+      return (
+        <option key={itemEA.PlayerID} value={itemEA.PlayerID}>
+          {itemEA.PlayerFirstName + " " + itemEA.PlayerLastName}
+        </option>
+      );
+    });
+    return (
+      <select onChange={this.handleChange}>
+        <option value="">Select Player</option>
+        {options}
+      </select>
+    );
+  },
+});
+
+var TimeSelectList = React.createClass({
+  handleChange: function (event) {
+    this.props.onChange(event.target.value);
+  },
+  render: function () {
+    var timesEA = [];
+    var startTime = new Date();
+    startTime.setHours(8, 0, 0); // Start at 8:00 AM
+
+    // Generate times every 8 minutes from 8:00 AM to 4:00 PM
+    while (startTime.getHours() < 16) {
+      // Store the time in 24-hour format
+      var hour = startTime.getHours();
+      var minute = startTime.getMinutes();
+      var timeValueEA =
+        hour.toString().padStart(2, "0") +
+        ":" +
+        minute.toString().padStart(2, "0") +
+        ":00";
+
+      // Display the time in 12-hour format with AM/PM
+      var timeDisplayEA = startTime.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
       });
-  
-      return <td> {this.props.errorMessage} </td>;
-    },
-  });
-  
-  var TextInput = React.createClass({
-    getInitialState: function () {
-      return {
-        isEmpty: true,
-        value: null,
-        valid: false,
-        errorMessage: "",
-        errorVisible: false,
-      };
-    },
-  
-    handleChange: function (event) {
-      this.validation(event.target.value);
-  
-      if (this.props.onChange) {
-        this.props.onChange(event);
-      }
-    },
-  
-    validation: function (value, valid) {
-      if (typeof valid === "undefined") {
-        valid = true;
-      }
-  
-      var message = "";
-      var errorVisible = false;
-  
-      if (!valid) {
-        message = this.props.errorMessage;
-        valid = false;
-        errorVisible = true;
-      } else if (this.props.required && jQuery.isEmptyObject(value)) {
-        message = this.props.emptyMessage;
-        valid = false;
-        errorVisible = true;
-      } else if (value.length < this.props.minCharacters) {
-        message = this.props.errorMessage;
-        valid = false;
-        errorVisible = true;
-      }
-  
-      this.setState({
-        value: value,
-        isEmpty: jQuery.isEmptyObject(value),
-        valid: valid,
-        errorMessage: message,
-        errorVisible: errorVisible,
-      });
-    },
-  
-    handleBlur: function (event) {
-      var valid = this.props.validate(event.target.value);
-      this.validation(event.target.value, valid);
-    },
-    render: function () {
-      if (this.props.textArea) {
-        return (
-          <div className={this.props.uniqueName}>
-            <textarea
-              placeholder={this.props.text}
-              className={"input input-" + this.props.uniqueName}
-              onChange={this.handleChange}
-              onBlur={this.handleBlur}
-              value={this.props.value}
-            />
-  
-            <InputError
-              visible={this.state.errorVisible}
-              errorMessage={this.state.errorMessage}
-            />
-          </div>
-        );
-      } else {
-        return (
-          <div className={this.props.uniqueName}>
-            <input
-              type={this.props.inputType}
-              name={this.props.uniqueName}
-              id={this.props.uniqueName}
-              placeholder={this.props.text}
-              className={"input input-" + this.props.uniqueName}
-              onChange={this.handleChange}
-              onBlur={this.handleBlur}
-              value={this.props.value}
-            />
-  
-            <InputError
-              visible={this.state.errorVisible}
-              errorMessage={this.state.errorMessage}
-            />
-          </div>
-        );
-      }
-    },
-  });
-  
-  ReactDOM.render(<ReservationBox />, document.getElementById("content"));
-  
+
+      // Push the time object to the times array
+      timesEA.push({ value: timeValueEA, display: timeDisplayEA });
+
+      // Increment time by 8 minutes
+      startTime.setMinutes(startTime.getMinutes() + 8);
+    }
+
+    var options = timesEA.map(function (timeObjEA, index) {
+      return (
+        <option key={index} value={timeObjEA.value}>
+          {timeObjEA.display}
+        </option>
+      );
+    });
+
+    return (
+      <select onChange={this.props.onChange}>
+        <option value="">Select Time</option>
+        {options}
+      </select>
+    );
+  },
+});
+
+ReactDOM.render(<ReservationBox />, document.getElementById("content"));
